@@ -1,0 +1,149 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>PANINO STANTIO</title>
+    <style>
+         body {
+            background-color: beige;
+            font-family: Arial, sans-serif;
+        }
+
+
+        .container {
+            background-color: yellow;
+            padding: 20px;
+            border-radius: 10px;
+            width: 300px;
+            margin: 50px auto;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+        }
+
+
+        .cart-header {
+            text-align: center;
+            font-size: 24px;
+            margin-bottom: 10px;
+            color: black;
+        }
+
+
+        .cart-item {
+            margin: 10px 0;
+            padding: 10px;
+            background-color: white;
+            border-radius: 5px;
+            box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
+            color: black;
+        }
+
+
+        .cart-total {
+            margin-top: 20px;
+            text-align: right;
+            font-weight: bold;
+            color: black;
+        }
+
+
+        .add-button, .remove-button {
+            background-color: yellow;
+            color: black;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="cart-header">
+            Meu Carrinho de Compras
+        </div>
+        <form method="post">
+            <div class="cart-item">
+                Pão Integral - $2.00
+                <button class="add-button" type="submit" name="add" value="bread">Adicionar</button>
+                <button class="remove-button" type="submit" name="remove" value="bread">Remover</button>
+            </div>
+            <div class="cart-item">
+                Vinho Tinto - $20.00
+                <button class="add-button" type="submit" name="add" value="wine">Adicionar</button>
+                <button class="remove-button" type="submit" name="remove" value="wine">Remover</button>
+            </div>
+            <div class="cart-item">
+                Queijo Cheddar - $5.00
+                <button class="add-button" type="submit" name="add" value="cheese">Adicionar</button>
+                <button class="remove-button" type="submit" name="remove" value="cheese">Remover</button>
+            </div>
+            <div class="cart-item">
+                Queijo Gouda - $4.00
+                <button class="add-button" type="submit" name="add" value="gouda">Adicionar</button>
+                <button class="remove-button" type="submit" name="remove" value="gouda">Remover</button>
+            </div>
+            <div class="cart-item">
+                Brigadeiro - $1.50
+                <button class="add-button" type="submit" name="add" value="brigadeiro">Adicionar</button>
+                <button class="remove-button" type="submit" name="remove" value="brigadeiro">Remover</button>
+            </div>
+            <div class="cart-item">
+                Bolo - $3.50
+                <button class="add-button" type="submit" name="add" value="bolo">Adicionar</button>
+                <button class="remove-button" type="submit" name="remove" value="bolo">Remover</button>
+            </div>
+        </form>
+        <div class="cart-total">
+            Total: $<%= session.getAttribute("totalAmount") %>
+<div class="payment-options">
+    <label>Escolha o método de pagamento:</label><br>
+    <input type="radio" name="paymentMethod" value="cash"> Dinheiro<br>
+    <input type="radio" name="paymentMethod" value="card"> Cartão<br>
+    <input type="radio" name="paymentMethod" value="voucher"> Voucher<br>
+    <input type="radio" name="paymentMethod" value="pix"> PIX<br>
+<div class="shipping-options">
+    <label>Escolha a data de envio:</label><br>
+    <input type="date" name="shippingDate"><br>
+</div>
+
+
+</div>
+<button class="submit-button" type="submit" name="submit">Finalizar Compra</button>
+
+
+        </div>
+    </div>
+    <%
+    String[] itemNames = {"bread", "wine", "cheese", "gouda", "brigadeiro", "bolo"};
+    double[] itemPrices = {2.00, 20.00, 5.00, 4.00, 1.50, 3.50};
+
+
+    if (session.getAttribute("totalAmount") == null) {
+        session.setAttribute("totalAmount", 0.00);
+        
+    }
+
+
+    if (request.getParameter("add") != null) {
+        String selectedItem = request.getParameter("add");
+        int itemIndex = java.util.Arrays.asList(itemNames).indexOf(selectedItem);
+        double currentTotal = (Double) session.getAttribute("totalAmount");
+        currentTotal += itemPrices[itemIndex];
+        session.setAttribute("totalAmount", currentTotal);
+    }
+
+
+    if (request.getParameter("remove") != null) {
+        String selectedItem = request.getParameter("remove");
+        int itemIndex = java.util.Arrays.asList(itemNames).indexOf(selectedItem);
+        double currentTotal = (Double) session.getAttribute("totalAmount");
+        currentTotal -= itemPrices[itemIndex];
+        
+        // Ensure that the total amount doesn't go below zero
+        if (currentTotal < 0) {
+            currentTotal = 0;
+        }
+        
+        session.setAttribute("totalAmount", currentTotal);
+    }
+%>
